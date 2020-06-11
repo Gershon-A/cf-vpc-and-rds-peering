@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: VPC peering between EKS and RDS clusters
+Parameters: 
+  RDSServiceVPC:
+    Description: RDS VPC 
+    Type: 'AWS::EC2::VPC::Id'
+    Default: vpc-22222222
+  EKSServiceVPC:
+    Description: EKS VPC 
+    Type: 'AWS::EC2::VPC::Id'
+    Default: vpc-11111111
+  RDSrouteTable:
+    Description: RDS route table 
+    Type: String
+    Default: rtb-0f8ccf8e31b188f82
+  EKSrouteTable:
+    Description: EKS route table 
+    Type: String
+    Default: rtb-036b6e6ed1184dec3
+  RDSSecurityGroup:
+    Description: RDS security group 
+    Type: String
+    Default: sg-0d28522b6856a6b57
+Mappings: {}
+Resources:
+  AWSEC2VPCPeeringConnection:
+    Type: 'AWS::EC2::VPCPeeringConnection'
+    Properties:
+      PeerVpcId: !Ref EKSServiceVPC
+      VpcId: !Ref RDSServiceVPC 
+  #AWSEC2RouteTable:
+  #  Type: 'AWS::EC2::RouteTable'
+  #  Properties:
+  #    VpcId: !Ref RDSServiceVPC
+  EKSRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref EKSrouteTable
+      DestinationCidrBlock: 10.0.0.0/24
+      VpcPeeringConnectionId: !Ref AWSEC2VPCPeeringConnection
+  #AWSEC2RouteTable2:
+  #  Type: 'AWS::EC2::RouteTable'
+  #  Properties:
+  #    VpcId: !Ref RDSServiceVPC
+  RDSRoute2:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RDSrouteTable
+      DestinationCidrBlock: 192.168.0.0/16
+      VpcPeeringConnectionId: !Ref AWSEC2VPCPeeringConnection
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 7dc2fc12-3d39-4c30-b970-c48dfc29d0c3
+  # Allow all ingress traffic from the EKS cluster to the RDS instance on port 3306:
+  SecurityGroupRDSIngress:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref RDSSecurityGroup
+      IpProtocol: tcp
+      FromPort: '3306'
+      ToPort: '3306'
+      CidrIp: 192.168.0.0/16
+Outputs: 
+  RDSServiceVPC:
+    Description: The ID of the RDS VPC 
+    Value: !Ref RDSServiceVPC
+    Export:
+      Name: !Sub '${AWS::StackName}-RDSVPC'
+  EKSServiceVPC:
+    Description: The ID of the EKS VPC
+    Value: !Ref EKSServiceVPC
+    Export:
+      Name: !Sub '${AWS::StackName}-EKSVPC'
+  AWSEC2VPCPeeringConnection:
+    Description: The Peering ID 
+    Value: !Ref AWSEC2VPCPeeringConnection
+    Export:
+      Name: !Sub '${AWS::StackName}-PEERID'
+  RDSrouteTable:
+    Description: RDS route table 
+    Value: !Ref RDSrouteTable
+    Export:
+      Name: !Sub '${AWS::StackName}-RDSrouteTable'

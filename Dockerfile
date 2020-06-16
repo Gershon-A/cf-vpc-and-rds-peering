@@ -1,5 +1,6 @@
 FROM alpine:edge
-
+# Install curl
+RUN apk add curl
 # https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
 ARG AWS_IAM_AUTH_VERSION_URL="https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/aws-iam-authenticator"
 

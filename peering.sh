@@ -25,10 +25,10 @@ print_usage() {
     echo ""
     echo "TIP:to get all avaliable VPC's \
     [docker run --rm -v "$HOME\.aws\credentials":/root/.aws/credentials:ro \
-     testproject-aws-tools \
+     aws-tools \
      aws ec2 describe-vpcs --filters Name=tag-key,Values=* Name=tag-value,Values=* --output text --region us-east-1]"
-    echo "On Windows, we must to use full path to directory, set it [export MYPATH=\"C:\\Users\\GershonA\\Documents\\Project\\CloudFormation\\eks-cluster\"]"
-    echo "On Windows, we also must set HOME directory in windows style: [export HOME=\"C:\\Users\\GershonA\"]"
+    echo "On Windows, we must to use full path to directory, set it [export MYPATH=\"C:\\Users\\xxxxxxx\\Documents\\Project\\CloudFormation\\eks-cluster\"]"
+    echo "On Windows, we also must set HOME directory in windows style: [export HOME=\"C:\\Users\\xxxxx\"]"
     echo "Example usage: ./$(basename $0) -e=dev -c=VPC-Peering -r=us-east-1 -rc=vpc-0a4ba7103a0f2c5db -ac=vpc-0e640bc09a7f32f8c"
 }
 # Parse command line arguments
@@ -110,7 +110,7 @@ CONTAINER_ID=$(\
 docker run  \
   -v "$HOME\.aws\credentials":/root/.aws/credentials:ro \
   -v "$MYPATH/vpc-peering/templates":/templates \
-  -t -d testproject-aws-tools \
+  -t -d aws-tools \
   ) &&  echo "Container running with id: $CONTAINER_ID"
 
 # Copy the template file to docker container

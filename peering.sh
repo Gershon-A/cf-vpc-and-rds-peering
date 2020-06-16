@@ -121,7 +121,7 @@ docker run  \
 docker cp templates/. $CONTAINER_ID:/templates
 
 # Validating
-echo "Validating stack template (executed on docker)..."
+echo "Validating Cloud formation VPC peering stack template (executed on docker)..."
 docker exec -it $CONTAINER_ID sh \
 -c "aws cloudformation validate-template --template-body  file://${STACK_TEMPLATE} --region ${STACK_REGION}"  1> /dev/null
 [ $? -eq 0 ] || { echoerr "Stack validation failed!"; exit 1; }

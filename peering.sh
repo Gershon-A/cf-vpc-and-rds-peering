@@ -12,6 +12,10 @@ echoerr() {
 
 # Define Directory
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Build the image
+docker build . \
+ -t aws-tools \
+ -f  Dockerfile
 
 print_usage() {
     echo "a script that create a VPC peering between VPC and RDS:"
